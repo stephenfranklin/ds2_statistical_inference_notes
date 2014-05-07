@@ -1,4 +1,7 @@
 \documentclass{article}
+%%%%% statistical_inference.Rnw
+%%%%% LaTeX / Sweave notes by Stephen Franklin, May 2014,
+%%%%% for Statistical Inference - Coursera / John Hopkins - Prof. Brian Caffo
 
 %%%%%% my custom command definitions %%%%%%
 
@@ -132,24 +135,23 @@ Andrey Nikolaevich Kolmogorov in 1933 formulated these eight axioms and said tha
 \item continuous: $P(X \in A)$
 \end{enumerate}
 
-\subsubsection*{PMF}
-A probability mass function evaluated at a value corresponds to the probability that a random variable takes that value. To be a valid PMF, a function $p$ must satisfy:
+\subsection*{PMF - Probability Mass Function}
+The probability mass function describes a discrete random variable. A PMF evaluated at a value corresponds to the probability that a random variable takes that value. To be a valid PMF, a function $p$ must satisfy:
 \begin{enumerate}
 \item $p(x) \ge$ for all $x$.
 \item $\sum_x p(x) =1$
 \end{enumerate}
-where the sum is taken over all possible values for $x$.\\
-The PMF describes discrete random variables.\\
-\\
-Example 1:\\
+where the sum is taken over all possible values for $x$.
+
+\subsubsection*{Example 1:}
 Let $X$ be the result of a coin flip where $X=\{0,1\}$ or \{heads,tails\}.
 \bea
 p(x) &=& (1/2)^x (1/2)^{1-x} \tn{ for } x=0,1 \\
 p(1) &=& (1/2)^1 (1/2)^{1-1} \ = \ 1/2 \\
 p(0) &=& (1/2)^0 (1/2)^{1-0} \ = \ 1/2
 \eea
-\\
-Example 2:\\
+
+\subsubsection*{Example 2:}
 Suppose the coin isn't fair. Let $\theta$ be the probability of a head expressed as a proportion (between 0 and 1), say 0.25.
 \bea
 p(x) &=& \theta^x (1-\theta)^{1-x} \tn{ for } x=0,1 \\
@@ -157,6 +159,117 @@ p(1) &=& \theta^1 (1-\theta)^{1-1} \ = \ \theta \\
 p(0) &=& \theta^0 (1-\theta)^{1-0} \ = \ 1-\theta
 \eea
 So if heads is $\theta = 0.25$, then tails is $1-0.25 = 0.75$.
+
+\subsection*{PDF - Probability Density Function}
+The probability density function describes a continuous random variable. The area under the PDF line corresponds to a probability for a group of values of the variable.\\
+To be a valid PDF, a function $f$ must satisfy:
+\begin{enumerate}
+\item $f(x) \ge$ for all $x$.
+\item The area under $f(x)$ is one.
+\end{enumerate}
+A single value of a continuous random variable corresponds to an area of 0.\\
+Instead, we refer to a probability of a region of values (between $a$ and $b$).
+The fact that the probability of a single specific value is 0 is a consequence of modeling the probability as a truly continuous entity, an infinite decimal expansion, wherein we cannot attain infinite precision. In other words, there is no such thing as a single specific value.\\
+\\
+The Gaussian Bell Curve is the most famous example of a probability density function.
+
+\subsubsection*{Example 1:}
+Suppose that the proportion of help calls that get addressed in a random day by a help line is given by this probability density:
+$$
+f(x) = \left\{ \begin{array}{rl}
+ 2x &\mbox{ for $1 > x > 0$} \\
+ 0 &\mbox{ otherwise}
+        \end{array} \right.
+$$
+Is this a mathematically valid density?
+<<pdf_example_1, fig=T, echo=T >>=
+x <- c(-0.5, 0, 1, 1, 1.5)
+y <- c(0, 0, 2, 0, 0)
+#par(pin = c(2,2), mar = (c(2, 2, 2, 1) + 0.1))
+plot(x,y, lwd=3, frame=F, type="l")
+abline(v=0.5)
+abline(v=0.75)
+@
+\\
+If we ask "What percentage of days do between 50\% and 75\% of the calls get addressed?," then the area under within the lines corresponds to the percentage of days that that range of calls get addressed.\\
+\\
+It's roughly $0.25 \cdot 1.25 = 0.31$ or \\
+"31\% of the time (in days) between 50\% and 75\% of calls are addressed on a day."
+
+\subsubsection*{Example 2:}
+What is the probability that 75\% or fewer calls get addressed?
+<<pdf_example_2, fig=T, echo=T >>=
+x <- c(-0.5, 0, 1, 1, 1.5)
+y <- c(0, 0, 2, 0, 0)
+#par(pin = c(2,2))
+plot(x,y, lwd=3, frame=F, type="l")
+abline(v=0)
+abline(v=0.75)
+@
+\\
+The area is $0.5 (0.75 \cdot 1.5) = 0.5625$. \\
+\\
+In R, the command \emph{pbeta()} of x will return the probability of being lower than x:
+<<echo=T>>=
+pbeta(0.75, 2, 1)
+@
+
+\subsection*{CDF and Survival Function}
+The Cumulative Distribution Function of a random variable $X$ is defined as the function:
+$$F(x) = P(X \le x)$$
+This definition applies to both discrete and continuous variables.\\
+\\
+The Survival Function of a random variable $X$ is defined as:
+$$S(x) = P(X > x)$$
+Notice that $S(X) = 1 - F(X)$.\\
+\\
+For continuous variables the PDF is the derivative of the CDF.
+
+\subsubsection*{Example:}
+What are the Survival Function and the CDF from the density considered previously?\\
+\\
+For $1 \ge x \ge 0$ \\
+(We must exclude unanswered calls, i.e. outside of $x=[0,1]$, for this density to make sense),
+\bea
+F(x)    &=& P(X \le x) \ =\  \frac{1}{2} \ base \times height \\
+        &=& \frac{1}{2} (x) \times (2x) \ = \ x^2 \\
+S(x)    &=& 1-x^2
+\eea
+\\
+In R, we can use the \emph{pbeta()} function to get the probabilities:\\
+<<echo=TRUE>>=
+pbeta(c(0.4,0.5,0.6), 2, 1)
+@
+
+\subsection*{Quantiles}
+The $\alpha^{th}$ quantile of a distribution with the distribution function $F$ is the point $x_{\alpha}$ so that:
+$$F(x_{\alpha}) = \alpha$$
+A percentile is simply a quantile with $\alpha$ expressed as a percent. \\
+\\
+The median is the $50^{th}$ percentile, or the $0.5^{th}$ quantile, and can be expressed as $x_{0.5}$. \\
+\\
+Consider that 0.5 of the area lies below $x_{0.5}$ and 0.5 of the area lies above it. We can express that as: $0.5 = F(x_{0.5})$. \\
+\\
+Recall that the cumulative distribution function for our example is $F = x^2$. \\
+To find $x_{0.5}$, we must invert the function $F$.
+\bea
+x \ = \ F^{-1}(x) \ = \ \sqrt{x} \\
+x_{0.5} \ = \ \sqrt{0.5} \ = \ 0.707
+\eea \\
+Therefore, about 70\% of calls being answered on a random day is the median.\\
+\\
+In general, the distribution function describes a point $x_{\alpha}$ along a density for which the area $\alpha$ lies below it, and the area $1-\alpha$ lies above it.\\
+\\
+In R, we can approximate the quantiles for common distributions with the function \emph{qbeta()}:
+<<echo=TRUE>>=
+qbeta(0.5,2,1)
+@
+\subsection*{Probability Summary}
+A probability model uses assumptions to connect the sample data (which is limited) to the population.  We want connect the sample median to the population median; the population median is the estimand, and the sample median is the estimator.
+
+\section*{Expected Values}
+
+
 
 
 
