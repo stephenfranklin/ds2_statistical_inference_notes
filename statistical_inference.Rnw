@@ -1,7 +1,7 @@
 \documentclass{article}
 %%%%% statistical_inference.Rnw
 %%%%% LaTeX / Sweave notes by Stephen Franklin, May 2014,
-%%%%% for Statistical Inference - Coursera / John Hopkins - Prof. Brian Caffo
+%%%%% for Statistical Inference - Coursera / Johns Hopkins - Prof. Brian Caffo
 
 %%%%%% my custom command definitions %%%%%%
 
