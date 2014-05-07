@@ -1,0 +1,164 @@
+\documentclass{article}
+
+%%%%%% my custom command definitions %%%%%%
+
+%% \mathbf sucks because it screws up other math mode directives.  Instead
+%% use \boldsymbol (from AMS) since it puts stuff in bold italics.
+\newcommand{\bsymb}[1]{\boldsymbol{#1}}
+\newcommand{\bea}{\begin{eqnarray*}}
+\newcommand{\eea}{\end{eqnarray*}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\si}{\subitem}
+\newcommand{\ssi}{\subsubitem}
+\newcommand{\tn}{\textnormal}  % in math mode text will use font of document.
+    %% \textrm = roman font, \tt=\texttt = typewriter font
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\section*{Statistical Inference Notes}
+Statistical Inference is the process of drawing formal conclusions;
+as settings where one wants to infer facts about a population using noisy statistical data where uncertainty must be accounted for.\\
+\\
+A strong inference may affect the study itself. Researchers may decide it is ethically responsible to halt the study in light of strongly positive or negative preliminary results.
+
+\subsection*{Considerations of a study include:}
+\begin{itemize}
+    \item Is the sample representative of the target population?
+    \item Is the sample representative of the target population?
+    \item Are there known and observed, known and unobserved, or unknown and unobserved variables that contaminate our conclusions?
+    \item Is there systematic bias created by missing data or the design or conduct of the study?
+    \item What randomness exists in the data and how do we use or adjust for it?  
+        \subitem Randomness can be explicit via randomization or random sampling,
+        \subitem or implicit as the aggregation of many complex unknown processes.
+    \item Are we trying to estimate an underlying mechanistic model of phenomena under study?
+\end{itemize}
+
+\subsection*{Example goals of Inference:}
+\begin{itemize}
+    \item Estimate or quantify the uncertainty of an estimate.
+    \item Determine whether the quantity is a benchmark value ("Is the treatment effective?")
+    \item Infer a mechanistic relationship when quantities are measured with noise ("What is the slope for Hooke's Law?")
+    \item Determine the overall impact of a policy a phenomenon, as opposed to revealing the mechanism that describes it.
+\end{itemize}
+
+\subsection*{Some tools of the trade:}
+\begin{itemize}
+    \item Randomization: balances unobserved variables that may confound inferences, i.e between the control and treated.
+    \item Random Sampling: data obtained is representative of the population of interest.
+    \item Sampling models: a model for the sampling process is created because Randomization and Random Sampling are often impossible. "iid".
+    \item Hypothesis Testing: Decision making in the presence of uncertainty.
+    \item Confidence Intervals: Quantify the uncertainty in estimation.
+    \item Probability Models: A formal connection between the data and the population of interest; assumed or approximated.
+    \item Study Design: Designing the experiment to minimize bias and variability. Of course randomized is the best.
+    \item Nonparametric Bootstrapping: The process of using the data (with minimal Probability Model assumptions) to create inferences.
+    \item Permutation, Randomization, and Exchangability Testing: The process of using data permutations to perform inferences.
+\end{itemize}
+
+\subsection*{Thinking Styles:}
+Data scientists use some combination of two opposing modes of inference (as well as other schools of thought):
+\begin{itemize}
+    \item Frequency Inference: What should I decide given the long-run-proportion of events in independent, identically distributed repetitions?
+    \item Bayesian Inference: Given my subjective beliefs, and the new objective information from the data, how should I modify my beliefs?
+\end{itemize}
+
+This class will focus on frequency style analyses, beginning with probability modeling.
+
+\section*{Probability}
+\subsection*{Notation}
+\begin{itemize}
+    \item $\Omega$: The sample space; the collection of all possible outcomes.
+        \subitem e.g. die roll: $\Omega = \{1,2,3,4,5,6\}$
+    \item $E$: (Or another letter.) An event; a subset of $\Omega$.
+        \subitem e.g. die roll is even: $E = \{2,4,6\}$
+    \item $omega$: (Or another letter.) An elementary or simple event is a particular result of an experiment.
+        \subitem e.g. die roll is a four: $\omega = 4$
+    \item $\emptyset$: The null event or empty set.
+\end{itemize}
+
+\subsection*{Common Set Operations}
+\bi
+\item $\omega \in E$: The simple event $\omega$ is an element of set $E$.  
+    \subitem Implies that $E$ occurs when $\omega$ occurs.
+    \subitem e.g. If I rolled a 4, then I rolled an even number.  
+\item $\omega \notin E$: The simple event is not an element of the set.
+    \subitem Implies that $E$ doesn't occur when $\omega$ occurs.
+\item $E \subset F$: The set $E$ is a subset of set $F$.
+    \subitem The occurrence of $E$ implies the occurrence of $F$.
+\item $E \cap F$: Intersection; the set containing all the elements that are in both the sets $E$ and $F$.
+    \subitem Implies an event for which both $E$ and $F$ occur.
+\item $E \cup F$: Union; the set containing all the elements in both $E$ and $F$.
+    \subitem Implies an event for which $E$ or $F$ or both occur.
+\item $E \cap F = \emptyset$: $E$ and $F$ are mutually exclusive; both cannot occur; no intersection.
+\item $E^c$ or $\bar{E}$: The event for which $E$ doesn't occur.
+\ei
+
+\subsection*{Probability}
+A probability measure, $P$, is a function from the sample space $\Omega$ for which the following hold true:\\
+\begin{enumerate}
+\item For an event $E \subset \Omega, 0 \le P(E) \le 1$.
+    \subitem For an event in a subset of the sample space, 
+    \subitem the probability is between 0 and 1.
+\item $P(\Omega) = 1$.
+    \subitem The probability of an event in the entire sample space is 1.
+\item If $E_1 \cap E_2 = \emptyset, P(E_1 \cup E_2) = P(E_1) + P(E_2)$.
+    \subitem If $E_1$ and $E_2$ have no intersection,
+    \subitem then the probability of their union is the sum of their probabilities.
+\item \#3 implies finite additivity:
+    $$P(\cup^n_{i=1}A_i)=\sum_{i=1}^{n} P(A_i)$$
+    \subitem where the ${A_i}$ are mutually exclusive.
+    \subitem If you union up a bunch of mutually exclusive events,
+    \subitem then the union can become a sum.
+\end{enumerate}
+
+\subsection*{Example Consequences}
+Andrey Nikolaevich Kolmogorov in 1933 formulated these eight axioms and said that these are all you need to have probability behave as we think it should.
+\bi
+\item $P(\emptyset)=0$
+    \subitem also $P(\Omega)=1$
+\item $P(E)=1-P(\bar{E})$
+\item $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
+\item if $A \subset B$ then $P(A) \le P(B)$
+\item $P(A \cup B) = 1-P(\bar{A} \cap \bar{B})$
+\item $P(A \cap \bar{B}) = P(A) - P(A \cap B)$
+\item $P(\cup^n_{i=1} E_i) \le \sum_{i=1}^n P(E_i)$
+\item $P(\cup^n_{i=1} E_i) \ge \tn{max}_i P(E_i)$
+\ei
+
+\subsection*{Random Variables}
+\begin{enumerate}
+\item discrete: $P(X=k)$
+\item continuous: $P(X \in A)$
+\end{enumerate}
+
+\subsubsection*{PMF}
+A probability mass function evaluated at a value corresponds to the probability that a random variable takes that value. To be a valid PMF, a function $p$ must satisfy:
+\begin{enumerate}
+\item $p(x) \ge$ for all $x$.
+\item $\sum_x p(x) =1$
+\end{enumerate}
+where the sum is taken over all possible values for $x$.\\
+The PMF describes discrete random variables.\\
+\\
+Example 1:\\
+Let $X$ be the result of a coin flip where $X=\{0,1\}$ or \{heads,tails\}.
+\bea
+p(x) &=& (1/2)^x (1/2)^{1-x} \tn{ for } x=0,1 \\
+p(1) &=& (1/2)^1 (1/2)^{1-1} \ = \ 1/2 \\
+p(0) &=& (1/2)^0 (1/2)^{1-0} \ = \ 1/2
+\eea
+\\
+Example 2:\\
+Suppose the coin isn't fair. Let $\theta$ be the probability of a head expressed as a proportion (between 0 and 1), say 0.25.
+\bea
+p(x) &=& \theta^x (1-\theta)^{1-x} \tn{ for } x=0,1 \\
+p(1) &=& \theta^1 (1-\theta)^{1-1} \ = \ \theta \\
+p(0) &=& \theta^0 (1-\theta)^{1-0} \ = \ 1-\theta
+\eea
+So if heads is $\theta = 0.25$, then tails is $1-0.25 = 0.75$.
+
+
+
+
+\end{document}
