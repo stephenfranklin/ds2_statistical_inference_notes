@@ -75,7 +75,7 @@ This class will focus on frequency style analyses, beginning with probability mo
         \subitem e.g. die roll: $\Omega = \{1,2,3,4,5,6\}$
     \item $E$: (Or another letter.) An event; a subset of $\Omega$.
         \subitem e.g. die roll is even: $E = \{2,4,6\}$
-    \item $omega$: (Or another letter.) An elementary or simple event is a particular result of an experiment.
+    \item $\omega$: (Or another letter.) An elementary or simple event is a particular result of an experiment.
         \subitem e.g. die roll is a four: $\omega = 4$
     \item $\emptyset$: The null event or empty set.
 \end{itemize}
@@ -89,7 +89,7 @@ This class will focus on frequency style analyses, beginning with probability mo
     \subitem Implies that $E$ doesn't occur when $\omega$ occurs.
 \item $E \subset F$: The set $E$ is a subset of set $F$.
     \subitem The occurrence of $E$ implies the occurrence of $F$.
-\item $E \cap F$: Intersection; the set containing all the elements that are in both the sets $E$ and $F$.
+\item $E \cap F$: Intersection; the set containing the elements that are common to both $E$ and $F$.
     \subitem Implies an event for which both $E$ and $F$ occur.
 \item $E \cup F$: Union; the set containing all the elements in both $E$ and $F$.
     \subitem Implies an event for which $E$ or $F$ or both occur.
@@ -267,7 +267,160 @@ qbeta(0.5,2,1)
 \subsection*{Probability Summary}
 A probability model uses assumptions to connect the sample data (which is limited) to the population.  We want connect the sample median to the population median; the population median is the estimand, and the sample median is the estimator.
 
-\section*{Expected Values}
+\section*{Expected Values - Discrete Random Variables}
+The Expected Value is the mean of a random variable, and is the center of its distribution.\\
+\\
+For a discrete random variable $X$ with PMF p(x), it is defined as:
+$$E[X] = \sum_x xp(x)x$$
+\\
+We use the square brackets [] to denote the expected value.\\
+\\
+$E[X]$ represents the center of mass of a collection of locations and weights, $\{x,p(x)\}$.
+
+\subsubsection*{Example - R Library Manipulate}
+<<example_manipulate,echo=TRUE,>>=
+library(manipulate)
+galton<-read.csv("Galton.csv")
+myHist <- function(mu){
+    hist(galton$child, col="blue", breaks=100)
+    lines(c(mu,mu), c(0,150), col="red", lwd=5)
+    mse <- mean((galton$child -mu)^2 )
+    text(63,150, paste("mu = ",mu ))
+    text(63,140, paste("Imbalance = ", round(mse,2) ))
+}
+#manipulate(myHist(mu), mu=slider(62,74, step=0.5))
+@
+The manipulate() library makes interactive plots, so it won't work in this .pdf document, but the histogram looks like this:\\
+<<echo=F, fig=TRUE>>=
+    #galton<-read.csv("Galton.csv")
+    hist(galton$Child, col="blue", breaks=100)
+    meanChild <- mean(galton$Child)
+    lines(rep(meanChild, 100), seq(0,150, length=100), col="red", lwd=5)
+@
+
+\subsubsection*{Example - expected value of a discrete variable}
+Suppose that a die is rolled and X is the number that is face up. \\
+What is the expected value of X?\\
+\\
+$$E[X] = 1 \cdot \frac{1}{6} + 2 \cdot \frac{1}{6} + 3 \cdot \frac{1}{6} + 4 \cdot \frac{1}{6} + 5 \cdot \frac{1}{6} + 6 \cdot \frac{1}{6} = 3.5$$
+
+\subsection*{Expected Value - Continuous Random Variables}
+For a continuous random variable $X$ with a density $f$ the expected value is defined as:
+$$E[X] = \tn{ the area under the function } tf(t)$$
+This definition borrow from the definition of center of mass for a continuous body.
+
+\subsubsection*{Example - expected value of a continuous variable}
+Consider a density where $f(x) = 1$ for $x$ between 0 and 1.\\
+Is this a valid density?\\
+Suppose $X$ follows this density. What is its expected value?\\
+\\
+$f(x)$ describes a block shaped density.\\
+It's valid because $y > 0$ everywhere that $x$ is positive,\\
+and it has a calculable area (base x height = 1 x 1 = 1).\\
+\\
+The function $tf(t)$ in this case is a right triangle where $x=y$.\\
+We can integrate that to find the area, or we can simply compute the area  of a triangle: (1/2 x base x height = 0.5).\\
+So 0.5 is the mean and the expected value, and it is also intuitively the center of mass for the block.
+
+\subsection*{Rules of Expected Values}
+\bi
+\item The expected value is a linear operator.
+\item If $a$ and $b$ are not random and $X$ and $Y$ are two random variables, then:
+    \subitem $E[aX+b] = aE[X]+b$
+    \subitem $E[X+Y] = E[X]+E[Y]$
+\item but:
+    \subitem $E[X \cdot Y] \ne E[X] \cdot E[Y]$
+    \subitem $E[X^2] \ne E[X]^2$
+\ei
+
+\subsubsection*{examples - rules of expected values}
+You flip a coin $X$ and simulate a uniform random number $Y$.\\
+What is the expected value of their sum?\\
+\\
+The random uniform density is the block-like density which yields numbers between 0 and 1; the expected value of the uniform density is 0.5.\\
+The coin flip yields only 0 or 1, and its expected value is also 0.5.
+$$E[X+Y] = E[X]+E[Y] = 0.5 + 0.5 = 1$$\\
+You roll a die twice. What is the expected value of the average? \\
+\\
+Let $X_1$ and $X_2$ be the results of two dice rolls. The average of course is their sum divided by their count.
+$$E[(X_1+X_2)/2] = \frac{1}{2}(E[X_1]+E[X_2]) = \frac{1}{2}(3.5 + 3.5) = 3.5$$
+\\
+That case can be generalized:\\
+Let $X_i$ for $i = 1, ..., n$ be a collection of random variables, each from a distribution  with mean $\mu$. \\
+Then the expected value of the sample average of $X_i$ is found by:
+\bea
+E \left[ \frac{1}{n} \sum_{i=1}^n X_i \right]
+&=& \frac{1}{n} E \left[ \sum_{i=1}^n X_i \right] \\
+&=& \frac{1}{n} \sum_{i=1}^n E \left[ X_i \right] \\
+&=& \frac{1}{n} \sum_{i=1}^n \mu = \mu
+\eea
+So if all the variables have the same mean, then their average also has that mean.\\
+Therefore, the expected value of the sample average is the population mean as well; it's exactly what we would like it to be.\\
+When the expected value of an estimator is what it is trying to estimate, we say that the estimator is unbiased.
+
+\subsection*{Variance}
+The variance of a random variable is a measure of spread.\\
+\\
+If $X$ is a random variable with mean $\mu$, the variance is defined as:
+$$Var(X) = E[(X-\mu)^2]$$
+the expected (squared) distance from the mean.\\
+\\
+Densities with a higher variance are more spread out then densities with lower variance.\\
+\\
+Computational form:
+$$Var(X) = E[X^2] - E[X]^2$$
+\\
+If $a$ is constant then $Var(aX) = a^2 Var(X)$.\\
+If you pull a constant out of a variance, the constant gets squared.\\
+\\
+The square root of the variance is the standard deviation.\\
+The standard deviation has the same units as $X$.\\
+If you pull a constant out of a standard deviation, it doesn't get squared.
+
+\subsubsection*{Example-variance}
+What's the sample variance from the result of a toss of a die?\\
+\\
+Recall that the expected variable of a die is $E[X]=3.5$.
+\bea
+E[X^2] &=& 1^2 \cdot \frac{1}{6} + 2^2 \cdot \frac{1}{6} + 3^2 \cdot \frac{1}{6} + 4^2 \cdot \frac{1}{6} + 5^2 \cdot \frac{1}{6} + 6^2 \cdot \frac{1}{6} = 15.17 \\
+Var(X)  &=& E[X^2] - E[X]^2 \\
+        &=& 15.17 - 3.5^2 = 2.92
+\eea
+
+\subsection*{Interpreting Variances}
+Chebyshev's inequality is useful for interpreting variances: \\
+The probability $P$ that a random variable $X$ is more than or equal to $k$ standard deviations $\sigma$ from its mean $\mu$ is less than or equal to $1/k^2$ for all distributions.
+$$P(|X-\mu| \ge k \sigma) \le \frac{1}{k^2}$$
+In other words, the probability that a random variable lies beyond $k$ standard deviations from its mean is less than $1/k^2$.
+\bea
+2 \sigma \rightarrow 25\% \\
+3 \sigma \rightarrow 11.11\% \\
+4 \sigma \rightarrow 6.25\% \\
+7 \sigma \rightarrow 2.04\% \\
+10 \sigma \rightarrow 1\%
+\eea
+These are upper bounds and the actual probability might be much smaller. With the normal distribution, for example, the probability that a variable lies 3 standard deviations away or further is 1\%.
+
+\subsubsection*{example 1 - interpreting variance}
+IQs are often said to be normally distributed with a mean of 100 and a sd of 15.\\
+What is the probability of a randomly drawn person having an IQ higher than 160 or below 40?
+\bi
+\item Thus we want to know the probability of a person being more than 4 standard deviations from the mean.
+\item Thus Chebyshev's inequality suggests that this will be no larger than 6\%.
+\item IQs distributions are often cited as being bell shaped, in which case this bound is very conservative.
+\item The probability of a random draw from a bell curve being 4 standard deviations from the mean is on the order of $10^{-5}$ (one thousandth of one percent).
+\ei
+
+\subsubsection*{example 2 - interpreting variance}
+A former buzz phrase in industrial quality control is Motorola's "six sigma", whereby businesses are suggested to control extreme events or rare defective parts.\\
+\\
+Chebyshev's inequality states that the probability of a "Six Sigma" event is less than $1/6^2 = 2.78\%$.\\
+\\
+If a bell curve is assumed, then the probability is on the order of $10^{-9}$ or one ten millionth of a percent.\\
+\\
+
+\subsection*{Moments}
+Variances and Means are both types of Moments of a distribution, and they are the first two moments, and the most important moments of a distribution.
 
 
 
