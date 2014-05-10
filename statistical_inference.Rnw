@@ -16,6 +16,7 @@
 \newcommand{\ssi}{\subsubitem}
 \newcommand{\tn}{\textnormal}  % in math mode text will use font of document.
     %% \textrm = roman font, \tt=\texttt = typewriter font
+\setlength{\parskip}{12pt}
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
@@ -277,10 +278,12 @@ We use the square brackets [] to denote the expected value.\\
 \\
 $E[X]$ represents the center of mass of a collection of locations and weights, $\{x,p(x)\}$.
 
-\subsubsection*{Example - R Library Manipulate}
+\subsubsection*{R Example - Expected Value}
+This example uses R, the libraries "Manipulate" and "UsingR", and the UsingR dataset "Galton.
 <<example_manipulate,echo=TRUE,>>=
 library(manipulate)
-galton<-read.csv("Galton.csv")
+library(UsingR)
+data(galton)
 myHist <- function(mu){
     hist(galton$child, col="blue", breaks=100)
     lines(c(mu,mu), c(0,150), col="red", lwd=5)
@@ -290,10 +293,9 @@ myHist <- function(mu){
 }
 #manipulate(myHist(mu), mu=slider(62,74, step=0.5))
 @
-The manipulate() library makes interactive plots, so it won't work in this .pdf document, but the histogram looks like this:\\
+The manipulate() library makes interactive plots, so it won't work in this .pdf document (and it's commented out) but the histogram looks like this:\\
 <<echo=F, fig=TRUE>>=
-    #galton<-read.csv("Galton.csv")
-    hist(galton$Child, col="blue", breaks=100)
+    hist(galton$child, col="blue", breaks=100)
     meanChild <- mean(galton$Child)
     lines(rep(meanChild, 100), seq(0,150, length=100), col="red", lwd=5)
 @
@@ -423,8 +425,176 @@ If a bell curve is assumed, then the probability is on the order of $10^{-9}$ or
 Variances and Means are both types of Moments of a distribution, and they are the first two moments, and the most important moments of a distribution.
 
 
+\section*{Independence}
+\subsection*{Independent Events}
+Two events $A$ and $B$ are independent if
+$$P(A \cap B) = P(A)P(B)$$
+Two random variables $X$ and $Y$ are independent if for any two sets $A$ and $B$
+$$P([X \in A] \cap [Y \in B]) = P([X \in A]) P ([Y \in B])$$
+If $A$ is independent of $B$ then:
+\bi
+\item $A^c$ is independent of $B$.
+\item $A$ is independent of $B^c$.
+\item $A^c$ is independent of $B^c$.
+\ei
 
+\subsubsection*{example - independent events}
+What is the probability of getting two consecutive heads?\\
+\bi
+\item $A = \{\tn{Head on flip 1}\} \approx P(A) = 0.5$
+\item $B = \{\tn{Head on flip 2}\} \approx P(B) = 0.5$
+\item $A \cap B = \{\tn{Head on flip 1 and 2}\}$
+\item $A \cap B = P(A)P(B) = 0.5 \cdot 0.5 = 0.25$
+\ei
+The multiplication of probabilities is only valid for the intersection of  independent events. If for any reason, known or unknown, the events are dependent then muliplying the probabilities isn't appropriate.\\
+An example is the Dr. Meadow SIDS testimony in which a mother was convicted of murder after two children died of SIDS.  Dr. Meadow calculated the probability of SIDS occurring twice in the same household as if they were independent events, however SIDS could have a genetic or environmental component which would mean that the events are not independent.\\
+\\
+Thus, $P(A_1 \cap A_2)$ is not necessarily equal to $P(A_1)P(A_2)$.
 
+\subsection*{Joint Distribution}
+If a collection of random variables $X_1,X_2,...,X_n$ are independent, then their joint distribution is the product of their individual densities or mass functions.\\
+That is, if $f_i$ is the density for random variable $X_i$, we have that
+$$f(x_1,...,x_n) = \prod_{i=1}^n f_i(x_i)$$
 
+\subsection*{IID Random Variables}
+ Independent and identically distributed random variables.
+ Identically distributed means that they come from the same distribution.
+ Coin flips are IID.\\
+iid random variables are the default model for random samples. We will assume our data are iid if we assume it is random even if it hasn't been sampled randomly.\\
+Most of the important theories of statistics are founded on the assumption that variables are iid.
+
+\subsubsection*{example - iid}
+Suppose we flip a biased coin with success probability $p\ n$ times, what is the joint density of the collection of outcomes?\\
+\\
+These random variables are iid with densities $p^{x_i}(1-p)^{1-x_i}$, therefore:
+\bea
+f(x_1,...,x_n)  &=& \prod_{i=1}^n p^{x_i}(1-p)^{1-x_i} \\
+                &=& p^{\sum x_i} (1-p)^{n-\sum x_i}
+\eea
+(To be clear, we're putting the summations in the exponents.)\\
+\\
+That implies that the order of the sequence isn't important, i.e. p(1,1,0,0) is the same as p(0,1,0,1). The probability depends only on the total number of successes and failures.
+
+\subsection*{Correlation}
+The covariance between two random variables $X$ and $Y$ is defined as
+$$Cov(X,Y) = E[(X-\mu_x)(Y-\mu_y)] = E[XY]-E[X]E[Y]$$
+ where $\mu$ is the mean.\\
+ Covariance is a measure of how two variables are linearly unrelated.
+ \begin{enumerate}
+ \item $Cov(X,Y) = Cov(Y,X)$
+ \item $Cov(X,Y)$ can be positive or negative.
+ \item $|Cov(X,Y)| \le \sqrt{Var(X)Var(Y)}$
+    \subitem where $\sqrt{Var(X)Var(Y)} = sd(X)sd(Y)$
+ \end{enumerate}
+
+\noindent That third statement implies correlation:
+$$Cor(X,Y) = Cov(X,Y) / \sqrt{Var(X)Var(Y)}$$
+which has the following properties:
+\begin{enumerate}
+\item $-1 \le Cor(X,Y) \le 1$
+\item $Cor(X,Y) = \pm 1$ if and only if $X=a+bY$ for some constants $a$ and $b$.
+\item $Cor(X,Y)$ is unitless.
+    \subitem sd has units of X or Y.
+\item $X$ and $Y$ are uncorrelated if $Cor(X,Y)=0$
+    \subitem They are also uncorrelated if $Cov(X,Y)=0$.
+\item $X$ and $Y$ are more positively correlated the closer $Cor(X,Y)$ is to 1.
+\item $X$ and $Y$ are more negatively correlated the closer $Cor(X,Y)$ is to -1.
+\end{enumerate}
+These properties describe the population correlation, which is a statement about the joint population density of the random variables $X$ and $Y$. The sample correlation is an estimate of the population correlation. \par
+
+\noindent Let ${X_i}_{i=1}^n$ be a collection of random variables:
+\bi
+\item When the ${X_i}$ are uncorrelated:
+$$Var \left( \sum_{i=1}^n a_i X_i +b \right) = \sum_{i=1}^n a_i^2 Var(X_i)$$
+\subitem The constant $a$ is pulled out and squared.
+\subitem The constant $b$ is irrelevant because shifting things doesn't affect variance.
+\item A commonly used subcase from this property is that if a collection of random variables ${X_i}$ are uncorrelated, then the variance of the sum is the sum of the variances:
+$$Var \left( \sum_{i=1}^n X_i \right) = \sum_{i=1}^n Var(X_i)$$
+\subitem ${X_i}$ must be independent.  If they aren't indepedent, then that property isn't true.
+\item Therefore, it is sums of variances that tend to be useful, not sums of standard deviations. In other words, the standard deviation of the sum of a bunch of independent random variables is the square root of the sum of the variances, not the sum of the standard deviations.
+\ei
+
+\subsection*{Sample Mean $\bar{X}$}
+Suppose ${X_i}$ are iid with variance $\sigma^2$:
+\bea
+Var(\bar{X})    &=& Var \left( \frac{1}{n} \sum_{i=1}^n X_i \right) \\
+                &=&  \frac{1}{n^2} Var \left( \sum_{i=1}^n X_i \right) \\
+                &=&  \frac{1}{n^2} \sum_{i=1}^n Var \left(X_i \right) \\
+                &=&  \frac{1}{n^2} n\sigma^2 \\
+                &=&  \frac{\sigma^2}{n}
+\eea
+where $\bar{X}$ is the Sample Mean of the random variable's values.\par
+\noindent Suppose we had 10 dice and rolled them and took the average $\bar{X}$. $\bar{X}$ is a random number and it has a probability mass function: it can be an integer from 1 to 6, and will likely be a bell-shaped curve. We know the center of the distribution is at 3.5 for a six-sided die.
+We now know that the sample mean variance has to be the variance $\sigma^2$ of a single die divided by the number of dice $n$.
+And if we take the square root of the sample mean variance, we get the standard error $\sigma/\sqrt{n}$
+
+\bi
+\item $\bar{X}=\frac{\sigma^2}{n}$ when $X_i$ are independent with common variance.
+\item $\frac{\sigma}{\sqrt{n}}$ is the standard error of the sample mean.
+\item The standard error of the sample mean is the standard deviation of the distribution of the sample mean.
+\item $\sigma$ is the standard deviation of the distribution of a single observation.
+\item The sample mean has to be less variable than a single observation, therefore it's reasonable that its standard deviation is divided by some amount related to the number of observations; that amount is $\sqrt{n}$.
+\item Both the standard deviation and the standard error have units of standard deviation. Standard error is a measure of the variability of the average of observations. Standard deviation is a measure of the variability of individual observations.
+\ei
+
+\subsection*{Sample Variance $s^2$}
+Sample variance is the sample average squared deviation from the empirical mean:
+$$s^2 = \frac{\sum_{i=1}^n (X_i - \bar{X})^2}{n-1}$$
+\bi
+\item The sample variance is an estimator of variance $\sigma^2$.
+\item Here is a version that's quicker for calculation:
+$$s^2 = \frac{\sum_{i=1}^n X_i^2 - n\bar{X}^2}{n-1}$$
+    \subitem which is analagous to $E[X^2] -E[X]^2$ that approximates the variance for the population calculation.
+\item The sample variance is (nearly, except for the -1) the mean of the squared deviations from the mean.
+\ei
+
+\subsection*{The sample variance is unbiased $n-1$}
+To explain why we use $n-1$ instead of $n$ in the denominator, let's look at the expected value of the numerator.  First, recall the formula for the variance of a random variable:
+$$Var(X) = E[X^2] - E[X]^2$$
+Thus:
+$$Var(X)+E[X]^2 = E[X^2]$$
+And recall that the mean is $\mu$.
+Therefore if we want to calculate the expected value of the sample mean squared $E[\bar{X}^2]$, we can plug in the expected value of the mean squared $\mu^2$ plus the variance of the mean $Var(\bar{X})$.
+Likewise, we can calculate $E[X_i^2]$ by substituting it with $\mu^2$ and adding $Var(X_i)$.
+\bea
+E \left[ \sum_{i=1}^n X_i^2 - n\bar{X}^2 \right]
+    &=& \sum_{i=1}^n E[X_i^2] - nE[\bar{X}^2] \\
+    &=& \sum_{i=1}^n \left\{ Var(X_i) + \mu^2 \right\} - n\left\{ Var(\bar{X})+\mu^2 \right\} \\
+    &=& \sum_{i=1}^n \left\{ \sigma^2 + \mu^2 \right\} - n\left\{ \sigma^2/n + \mu^2 \right\} \\
+    &=& n\sigma^2 + n\mu^2 - \sigma^2 - n\mu^2 \\
+    &=& (n-1)\sigma^2
+\eea
+I got lost in there, but basically the $n-1$ term is the correct denominator to avoid a bias in the sample mean. \par
+
+\noindent Some points to avoid confusion.
+\bi
+\item Suppose $X_i$ are iid with mean $\mu$ and variance $\sigma^2$.
+\item $s^2$ estimates $\sigma^2$.
+\item The calculation of $S^2$ involves dividing by $n-1$.
+\item $s/\sqrt{n}$ estimates the standard error of the mean $\sigma/\sqrt{n}$.
+\item $s^2/n$ estimates the variance of the mean $\sigma^2/n$
+\item $s/\sqrt{n}$ is called the sample standard error (of the mean).
+\item Don't confuse that $/\sqrt{n}$ with the $/(n-1)$ which is only for calculating $s^2$.
+\ei
+
+\subsubsection*{R Example - Sample Variance}
+This example uses R, the libraries "Manipulate" and "UsingR", and the UsingR dataset "father.son".
+<<example_manipulate,echo=TRUE,>>=
+library(UsingR)
+data(father.son)
+x <- father.son$sheight
+n <- length(x)
+hist(father.son$sheight,n,breaks=10,col="skyblue")
+round(c(sum((x-mean(x))^2)/(n-1), var(x), var(x)/n,
+        sd(x), sd(x)/sqrt(n)),2)
+@
+where we have a list of:
+\begin{enumerate}
+\item $s^2$, manual calculation of sample variance of heights ($\tn{inches}^2$).
+\item R calculation of $s^2$.
+\item Variance of the mean of heights ($\tn{inches}^2$).
+\item Standard deviation of heights (inches).
+\item Sample standard error of the mean of heights (inches).
+\end{enumerate}
 
 \end{document}
