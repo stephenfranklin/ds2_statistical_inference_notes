@@ -272,7 +272,7 @@ A probability model uses assumptions to connect the sample data (which is limite
 The Expected Value is the mean of a random variable, and is the center of its distribution.\\
 \\
 For a discrete random variable $X$ with PMF p(x), it is defined as:
-$$E[X] = \sum_x xp(x)x$$
+$$E[X] = \sum_x x\cdot p(x)$$
 \\
 We use the square brackets [] to denote the expected value.\\
 \\
