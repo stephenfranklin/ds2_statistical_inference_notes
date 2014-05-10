@@ -139,7 +139,7 @@ Andrey Nikolaevich Kolmogorov in 1933 formulated these eight axioms and said tha
 \subsection*{PMF - Probability Mass Function}
 The probability mass function describes a discrete random variable. A PMF evaluated at a value corresponds to the probability that a random variable takes that value. To be a valid PMF, a function $p$ must satisfy:
 \begin{enumerate}
-\item $p(x) \ge$ for all $x$.
+\item $p(x) \ge$ 0 for all $x$.
 \item $\sum_x p(x) =1$
 \end{enumerate}
 where the sum is taken over all possible values for $x$.
