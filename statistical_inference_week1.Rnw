@@ -1,5 +1,5 @@
 \documentclass{article}
-%%%%% statistical_inference.Rnw
+%%%%% statistical_inference_week1.Rnw
 %%%%% LaTeX / Sweave notes by Stephen Franklin, May 2014,
 %%%%% for Statistical Inference - Coursera / Johns Hopkins - Prof. Brian Caffo
 
@@ -21,7 +21,7 @@
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-\section*{Statistical Inference Notes}
+\section*{Statistical Inference Notes - WEEK 1}
 Statistical Inference is the process of drawing formal conclusions;
 as settings where one wants to infer facts about a population using noisy statistical data where uncertainty must be accounted for.\\
 \\
