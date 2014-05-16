@@ -2,9 +2,11 @@
 
 ## The Bernoulli distribution
 
+- Published by Jacob Bernoulli in 1685.
 - The **Bernoulli distribution** arises as the result of a binary outcome
 - Bernoulli random variables take (only) the values 1 and 0 with probabilities of (say) $p$ and $1-p$ respectively
-- The PMF for a Bernoulli random variable $X$ is $$P(X = x) =  p^x (1 - p)^{1 - x}$$
+- The PMF (probability mass function) for a Bernoulli random variable $X$ is $$P(X = x) =  p^x (1 - p)^{1 - x}$$
+- $X$ takes on the value of $x$ which can only be 0 or 1.
 - The mean of a Bernoulli random variable is $p$ and the variance is $p(1 - p)$
 - If we let $X$ be a Bernoulli random variable, it is typical to call $X=1$ as a "success" and $X=0$ as a "failure"
 
@@ -12,12 +14,15 @@
 
 ## iid Bernoulli trials
 
-- If several iid Bernoulli observations, say $x_1,\ldots, x_n$, are observed the
-likelihood is 
+- If several iid (independent and identically distributed) Bernoulli observations, say $x_1,\ldots, x_n$, are observed the
+likelihood is the product ($\prod$) of the mass functions, also called the joint mass function:
 $$
   \prod_{i=1}^n p^{x_i} (1 - p)^{1 - x_i} = p^{\sum x_i} (1 - p)^{n - \sum x_i}
 $$
+- If say $n=4$, and we want to know $P((1,1,0,0))$ versus $P((1,0,1,0))$,
+    - we'll find that those probibilities are the same; the order is irrelevant.
 - Notice that the likelihood depends only on the sum of the $x_i$
+    - likelihood is a function $p$, not $x$.
 - Because $n$ is fixed and assumed known, this implies that the sample proportion $\sum_i x_i / n$ contains all of the relevant information about $p$
 - We can maximize the Bernoulli likelihood over $p$ to obtain that $\hat p = \sum_i x_i / n$ is the maximum likelihood estimator for $p$
 
@@ -71,6 +76,11 @@ P(X = x) =
 p^x(1 - p)^{n-x}
 $$
 for $x=0,\ldots,n$
+
+- If we had a collection of iid Bernoulli random variables ($n=4$),
+the binomial for $p = (1,1,0,0)$ is 2, and for $p = (1,0,1,0)$ it's also 2.
+- $p^x(1 - p)^{n-x}$ for binomial $(x=2)$ gives us the probability associated with any of the combinations for that binomial.
+- $\left(\begin{array}{c}n \\ x \end{array} \right)$ tells us how many combinations for binomial $x=2$ there are.
 
 ---
 
@@ -137,7 +147,10 @@ $$
 choose(8, 7) * .5 ^ 8 + choose(8, 8) * .5 ^ 8 
 pbinom(6, size = 8, prob = .5, lower.tail = FALSE)
 ```
-
+- `lower.tail`: if TRUE (default), probabilities are $P[X \le x]$, otherwise, $P[X > x]$.
+    - We put 6 in this case because we want the upper tail of 7 or greater.
+    - That functionality is consistent with the definitions of the distribution function and the survival function.
+    
 ---
 ```{r, fig.height=5, fig.width=5}
 plot(pvals, dbinom(7, 8, pvals) / dbinom(7, 8, 7/8) , 
@@ -152,8 +165,10 @@ plot(pvals, dbinom(7, 8, pvals) / dbinom(7, 8, 7/8) ,
   $$
   (2\pi \sigma^2)^{-1/2}e^{-(x - \mu)^2/2\sigma^2}
   $$
-  If $X$ a RV with this density then $E[X] = \mu$ and $Var(X) = \sigma^2$
-- We write $X\sim \mbox{N}(\mu, \sigma^2)$
+  
+It's basically $e^{-x^2}$ normalized in the right way.  
+  If $X$ a RV (random variable) with this density then $E[X] = \mu$ and $Var(X) = \sigma^2$
+- We write $X\sim \mbox{N}(\mu, \sigma^2)$, "The random variable follows the normal distribution."
 - When $\mu = 0$ and $\sigma = 1$ the resulting distribution is called **the standard normal distribution**
 - The standard normal density function is labeled $\phi$
 - Standard normal RVs are often labeled $Z$
@@ -230,12 +245,13 @@ $$
 ---
 
 ## Final thoughts on normal likelihoods
-- The MLE for $\mu$ is $\bar X$.
+- The density evaluated as a function of parameters is called the likelihood. The points at which the likelhood is maximized are good estimators.
+- The MLE (maximum likelihood estimator) for $\mu$ is $\bar X$.
 - The MLE for $\sigma^2$ is
   $$
-  \frac{\sum_{i=1}^n (X_i - \bar X)^2}{n}
+  \frac{\sum_{i=1}^n (X_i - \bar X)^2}{n-1}
   $$
-  (Which is the biased version of the sample variance.)
+  (The biased version of the sample variance ($\hat{\sigma^2}$) uses $n$ instead of $n-1$. We use the unbiased version.)
 - The MLE of $\sigma$ is simply the square root of this
   estimate
 
