@@ -529,7 +529,7 @@ We now know that the sample mean variance has to be the variance $\sigma^2$ of a
 And if we take the square root of the sample mean variance, we get the standard error $\sigma/\sqrt{n}$
 
 \bi
-\item $\bar{X}=\frac{\sigma^2}{n}$ when $X_i$ are independent with common variance.
+\item $\tn{Var}(\bar{X})=\frac{\sigma^2}{n}$ when $X_i$ are independent with common variance.
 \item $\frac{\sigma}{\sqrt{n}}$ is the standard error of the sample mean.
 \item The standard error of the sample mean is the standard deviation of the distribution of the sample mean.
 \item $\sigma$ is the standard deviation of the distribution of a single observation.

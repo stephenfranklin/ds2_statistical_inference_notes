@@ -72,11 +72,14 @@ abline(h = 0)
 - The CLT applies in an endless variety of settings
 - Let $X_1,\ldots,X_n$ be a collection of iid random variables with mean $\mu$ and variance $\sigma^2$
 - Let $\bar X_n$ be their sample average
-- Then $\frac{\bar X_n - \mu}{\sigma / \sqrt{n}}$ has a distribution like that of a standard normal for large $n$.
+- Then the Standardized Mean is $\frac{\bar X_n - \mu}{\sigma / \sqrt{n}}$ has a distribution like that of a standard normal for large $n$.
 - Remember the form
 $$\frac{\bar X_n - \mu}{\sigma / \sqrt{n}} = 
     \frac{\mbox{Estimate} - \mbox{Mean of estimate}}{\mbox{Std. Err. of estimate}}.
 $$
+- That can also be written as:
+$$\sqrt{n}\frac{\bar X_n - \mu}{\sigma}$$
+Which makes sense because $\frac{\bar X_n - \mu}{\sigma}$ converges to 0, but if you multiply by $\sqrt{n}$ then it converges to a random variable and follows a $Z$ distribution for large $n$.
 - Usually, replacing the standard error by its estimated value doesn't change the CLT
 
 ---
@@ -87,7 +90,7 @@ $$
 - Let $X_i$ be the outcome for die $i$
 - Then note that $\mu = E[X_i] = 3.5$
 - $Var(X_i) = 2.92$ 
-- SE $\sqrt{2.92 / n} = 1.71 / \sqrt{n}$
+- SE (standard error) $\sqrt{2.92 / n} = 1.71 / \sqrt{n}$
 - Standardized mean
 $$
     \frac{\bar X_n - 3.5}{1.71/\sqrt{n}}
