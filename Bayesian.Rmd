@@ -11,6 +11,7 @@ title       : Bayesian inference
   $$
   \mbox{Posterior} \propto \mbox{Likelihood} \times \mbox{Prior}
   $$
+- $\propto$ means "proportional to"
 - Therefore (as we saw in diagnostic testing) the likelihood is
   the factor by which our prior beliefs are updated to produce
   conclusions in the light of the data
@@ -24,6 +25,10 @@ $$
 \frac{\Gamma(\alpha +  \beta)}{\Gamma(\alpha)\Gamma(\beta)}
  p ^ {\alpha - 1} (1 - p) ^ {\beta - 1} ~~~~\mbox{for} ~~ 0 \leq p \leq 1
 $$
+- $\Gamma$ is the Gamma function.
+- $p$ is the random variable in the beta density.
+- $\alpha$ and $\beta$ are parameters, 
+    - not to be confused with the type 1 and type 2 error rates.
 - The mean of the beta density is $\alpha / (\alpha + \beta)$
 - The variance of the beta density is 
 $$\frac{\alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$$
@@ -31,6 +36,7 @@ $$\frac{\alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$$
 
 ---
 
+We can play with the beta density by using the R manipulate library. This code won't work as html, so I've deleted the `{r}` designation.
 ```
 ## Exploring the beta density
 library(manipulate)
@@ -60,6 +66,7 @@ $$
 $$
 - This density is just another beta density with parameters
   $\tilde \alpha = x + \alpha$ and $\tilde \beta = n - x + \beta$
+- Think of $\alpha$ as the a priori number of successes; $\beta$ as the a priori number of failures.
 
 
 ---
@@ -74,6 +81,9 @@ E[p ~|~ X] & =   \frac{\tilde \alpha}{\tilde \alpha + \tilde \beta}\\ \\
 & =  \mbox{MLE} \times \pi + \mbox{Prior Mean} \times (1 - \pi)
 \end{align}
 $$
+- $0 < \pi < 1$
+- The action of $\pi ~ 1$ is a large MLE, and small prior mean.
+- The action of $\pi ~ 0$ is a small MLE, and large prior mean.
 
 ---
 ## Thoughts
@@ -84,7 +94,7 @@ $$
 - For small $n$, the prior mean dominates 
 - Generalizes how science should ideally work; as data becomes
   increasingly available, prior beliefs should matter less and less
-- With a prior that is degenerate at a value, no amount of data
+- With a prior that is degenerate (if we make the variance of the beta distribution equal zero) at a value, no amount of data
   can overcome the prior
 
 ---
@@ -109,6 +119,8 @@ $$
   puts $\alpha = \beta = .5$
 
 ---
+
+Here is another manipulate() example:
 ```
 pvals <- seq(0.01, 0.99, length = 1000)
 x <- 13; n <- 20
@@ -127,6 +139,7 @@ manipulate(
     beta = slider(0.01, 100, initial = 1, step = .5)
     )
 ```
+The idea that is shown here is that the posterior value is going to be somewhere between the prior value and the likelihood from the new data. The Bayesian provides a parameter (I think it's the $\alpha$) which indicates the position of the prior; and a parameter ($\beta$ I think) which indicates how certain we are of the prior, or how strong the prior is. Thus the prior tugs against how likely the new data are and the posterior ends up somewhere in between. For example, a posterior will be closer to a very strong prior.
 
 ---
 ## Credible intervals
@@ -152,7 +165,8 @@ gives the HPD interval.
 the default prior is the Jeffrey's prior.
 
 ---
-```
+Manipulate() example:
+```{r}
 pvals <- seq(0.01, 0.99, length = 1000)
 x <- 13; n <- 20
 myPlot2 <- function(alpha, beta, cl){
