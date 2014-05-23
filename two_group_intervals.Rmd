@@ -12,6 +12,7 @@
 
 - Let $X_1,\ldots,X_{n_x}$ be iid $N(\mu_x,\sigma^2)$
 - Let $Y_1,\ldots,Y_{n_y}$ be iid $N(\mu_y, \sigma^2)$
+    - We're assuming that those two variances are the same.
 - Let $\bar X$, $\bar Y$, $S_x$, $S_y$ be the means and standard deviations
 - Using the fact that linear combinations of normals are again normal, we know that $\bar Y - \bar X$ is also normal with mean $\mu_y - \mu_x$ and variance $\sigma^2 (\frac{1}{n_x} + \frac{1}{n_y})$
 - The pooled variance estimator $$S_p^2 = \{(n_x - 1) S_x^2 + (n_y - 1) S_y^2\}/(n_x + n_y - 2)$$ is a good estimator of $\sigma^2$
@@ -58,6 +59,7 @@ $$
 is a standard normal divided by the square root of an independent Chi-squared divided by its degrees of freedom 
 - Therefore this statistic follows Gosset's $t$ distribution with $n_x + n_y - 2$ degrees of freedom
 - Notice the form is (estimator - true value) / SE
+- keep track of whether you subtracted $\bar{Y} - \bar{X}$ or $\bar{X} - \bar{Y}$
 
 ---
 
@@ -84,8 +86,12 @@ $$
 sp <- sqrt((7 * 15.34^2 + 20 * 18.23^2) / (8 + 21 - 2))
 132.86 - 127.44 + c(-1, 1) * qt(.975, 27) * sp * (1 / 8 + 1 / 21)^.5
 ```
+The confidence interval crosses 0 so the difference could be attributed to chance.
 
 ---
+
+Here's another example; it's from the Galton sleep data.
+
 ```{r}
 data(sleep)
 x1 <- sleep$extra[sleep$group == 1]
@@ -94,9 +100,14 @@ n1 <- length(x1)
 n2 <- length(x2)
 sp <- sqrt( ((n1 - 1) * sd(x1)^2 + (n2-1) * sd(x2)^2) / (n1 + n2-2))
 md <- mean(x1) - mean(x2)
-semd <- sp * sqrt(1 / n1 + 1/n2)
+semd <- sp * sqrt(1 / n1 + 1/n2) ## standard error of the mean
 md + c(-1, 1) * qt(.975, n1 + n2 - 2) * semd
+### We see that it crosses 0; no apparent difference.
+```
+```{r}
+### Here's the t.test the easy way:
 t.test(x1, x2, paired = FALSE, var.equal = TRUE)$conf
+### Here's the easy and correct way; this data is paired.
 t.test(x1, x2, paired = TRUE)$conf
 ```
 
@@ -109,6 +120,7 @@ axis(1, at = 1 : 2, labels = c("Group 1", "Group 2"))
 for (i in 1 : n1) lines(c(1, 2), c(x1[i], x2[i]), lwd = 2, col = "red")
 for (i in 1 : n1) points(c(1, 2), c(x1[i], x2[i]), lwd = 2, col = "black", bg = "salmon", pch = 21, cex = 3)
 ```
+The Galton sleep data is paired, that is, each patient was tested at two different points in time, with the intent that we compare those two points.
 
 ---
 
@@ -118,11 +130,12 @@ for (i in 1 : n1) points(c(1, 2), c(x1[i], x2[i]), lwd = 2, col = "black", bg = 
 $$
     \bar Y - \bar X \sim N\left(\mu_y - \mu_x, \frac{s_x^2}{n_x} + \frac{\sigma_y^2}{n_y}\right)
 $$
+- We can't use the Gosset (Student) $t$ distribution with unequal variances. 
 - The statistic 
 $$
     \frac{\bar Y - \bar X - (\mu_y - \mu_x)}{\left(\frac{s_x^2}{n_x} + \frac{\sigma_y^2}{n_y}\right)^{1/2}}
 $$
-approximately follows Gosset's $t$ distribution with degrees of freedom equal to
+approximately follows Gosset's (Student's) $t$ distribution with degrees of freedom equal to
 $$
     \frac{\left(S_x^2 / n_x + S_y^2/n_y\right)^2}
     {\left(\frac{S_x^2}{n_x}\right)^2 / (n_x - 1) +
@@ -143,6 +156,9 @@ $$
 = [-8.91, 19.75]
 $$
 - In R, `t.test(..., var.equal = FALSE)`
+```{r}
+t.test()
+```
 
 ---
 ## Comparing other kinds of data
