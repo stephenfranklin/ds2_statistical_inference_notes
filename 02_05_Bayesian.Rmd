@@ -36,8 +36,8 @@ $$\frac{\alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$$
 
 ---
 
-We can play with the beta density by using the R manipulate library. This code won't work as html, so I've deleted the `{r}` designation.
-```
+We can play with the beta density by using the R manipulate library. This code won't work as html, but here is the code.  Run it in Rstudio.
+```{r eval= FALSE}
 ## Exploring the beta density
 library(manipulate)
 pvals <- seq(0.01, 0.99, length = 1000)
@@ -121,7 +121,7 @@ $$
 ---
 
 Here is another manipulate() example:
-```
+```{r,eval=FALSE}
 pvals <- seq(0.01, 0.99, length = 1000)
 x <- 13; n <- 20
 myPlot <- function(alpha, beta){
@@ -165,8 +165,8 @@ gives the HPD interval.
 the default prior is the Jeffrey's prior.
 
 ---
-Manipulate() example:
-```{r}
+Manipulate() example: (Again, code presented here, but it won't function outside of RStudio.)
+```{r, eval=F}
 pvals <- seq(0.01, 0.99, length = 1000)
 x <- 13; n <- 20
 myPlot2 <- function(alpha, beta, cl){
