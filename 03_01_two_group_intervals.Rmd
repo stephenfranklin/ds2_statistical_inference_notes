@@ -13,7 +13,8 @@
 - Let $X_1,\ldots,X_{n_x}$ be iid $N(\mu_x,\sigma^2)$
 - Let $Y_1,\ldots,Y_{n_y}$ be iid $N(\mu_y, \sigma^2)$
     - We're assuming that those two variances are the same.
-- Let $\bar X$, $\bar Y$, $S_x$, $S_y$ be the means and standard deviations
+- Let $\bar X$, $\bar Y$, $S_x$, $S_y$ be the observed means and standard deviations
+- Let $\mu_x$ and $\mu_y$ be the expected means.
 - Using the fact that linear combinations of normals are again normal, we know that $\bar Y - \bar X$ is also normal with mean $\mu_y - \mu_x$ and variance $\sigma^2 (\frac{1}{n_x} + \frac{1}{n_y})$
 - The pooled variance estimator $$S_p^2 = \{(n_x - 1) S_x^2 + (n_y - 1) S_y^2\}/(n_x + n_y - 2)$$ is a good estimator of $\sigma^2$
 
@@ -57,9 +58,10 @@ $$
     = \frac{\bar Y - \bar X - (\mu_y - \mu_x)}{S_p \left(\frac{1}{n_x} + \frac{1}{n_y}\right)^{1/2}}
 $$
 is a standard normal divided by the square root of an independent Chi-squared divided by its degrees of freedom 
-- Therefore this statistic follows Gosset's $t$ distribution with $n_x + n_y - 2$ degrees of freedom
+- This statistic follows Gosset's $t$ distribution with $n_x + n_y - 2$ degrees of freedom
 - Notice the form is (estimator - true value) / SE
 - keep track of whether you subtracted $\bar{Y} - \bar{X}$ or $\bar{X} - \bar{Y}$
+- For a null hypothesis, say $H_0: \mu_x -\mu_y = 0$, we don't need to know $\mu_x$ and $\mu_y$, we only need to know their difference, in this case, $0$.
 
 ---
 
@@ -69,8 +71,8 @@ is a standard normal divided by the square root of an independent Chi-squared di
 $$
     \bar Y - \bar X \pm t_{n_x + n_y - 2, 1 - \alpha/2}S_p\left(\frac{1}{n_x} + \frac{1}{n_y}\right)^{1/2}
 $$
-- Remember this interval is assuming a constant variance across the two groups
-- If there is some doubt, assume a different variance per group, which we will discuss later
+- Remember, we're using Sp because this interval assumes a single variance across the two groups.
+- Later, we'll discuss another method which directly handles groups with different variances. 
 
 ---
 
@@ -156,9 +158,6 @@ $$
 = [-8.91, 19.75]
 $$
 - In R, `t.test(..., var.equal = FALSE)`
-```{r}
-t.test()
-```
 
 ---
 ## Comparing other kinds of data
