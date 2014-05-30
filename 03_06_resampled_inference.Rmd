@@ -49,11 +49,13 @@ data(father.son)
 x <- father.son$sheight
 n <- length(x)
 theta <- median(x)
+## jk is a collection of delete-one medians
 jk <- sapply(1 : n,
              function(i) median(x[-i])
              )
 thetaBar <- mean(jk)
 biasEst <- (n - 1) * (thetaBar - theta) 
+## standard error estimate
 seEst <- sqrt((n - 1) * mean((jk - thetaBar)^2))
 ```
 
